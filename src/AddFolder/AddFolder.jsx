@@ -20,16 +20,17 @@ class AddFolder extends Component {
     fetch(`${config.API_ENDPOINT}/folders`, {
       method: "POST",
       headers: {
-        "context-type": "application/json"
+        "content-type": "application/json"
       },
       body: JSON.stringify(folder)
     })
       .then(res => {
+        console.log(res);
         if (!res.ok) return res.json().then(e => Promise.reject(e));
         return res.json();
       })
       .then(folder => {
-        this.context.addFolder(folder);
+        // this.context.addFolder(folder);
         this.props.history.push(`/folder/${folder.id}`);
       })
       .catch(error => {

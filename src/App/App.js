@@ -6,11 +6,12 @@ import NoteListMain from "../NoteListMain/NoteListMain";
 import NotePageMain from "../NotePageMain/NotePageMain";
 import AddFolder from "../AddFolder/AddFolder";
 import AddNote from "../AddNote/AddNote";
-import dummyStore from "../dummy-store";
-import { getNotesForFolder, findNote, findFolder } from "../notes-helpers";
+// import dummyStore from "../dummy-store";
+// import { getNotesForFolder, findNote, findFolder } from "../notes-helpers";
 import "./App.css";
 import ApiContext from "../ApiContext";
 import config from "../config";
+import Error from "./Error";
 
 class App extends Component {
   state = {
@@ -56,28 +57,36 @@ class App extends Component {
     return (
       <>
         {["/", "/folder/:folderId"].map(path => (
-          <Route
-            exact
-            key={path}
-            path={path}
-            // render={routeProps => (
-            //   <NoteListNav folders={folders} notes={notes} {...routeProps} />
-            // )}
-            component={NoteListNav}
-          />
+          <Error>
+            <Route
+              exact
+              key={path}
+              path={path}
+              // render={routeProps => (
+              //   <NoteListNav folders={folders} notes={notes} {...routeProps} />
+              // )}
+              component={NoteListNav}
+            />
+          </Error>
         ))}
-        <Route
-          path="/note/:noteId"
-          // render={routeProps => {
-          //   const { noteId } = routeProps.match.params;
-          //   const note = findNote(notes, noteId) || {};
-          //   const folder = findFolder(folders, note.folderId);
-          //   return <NotePageNav {...routeProps} folder={folder} />;
-          // }}
-          component={NotePageNav}
-        />
-        <Route path="/add-folder" component={NotePageNav} />
-        <Route path="/add-note" component={NotePageNav} />
+        <Error>
+          <Route
+            path="/note/:noteId"
+            // render={routeProps => {
+            //   const { noteId } = routeProps.match.params;
+            //   const note = findNote(notes, noteId) || {};
+            //   const folder = findFolder(folders, note.folderId);
+            //   return <NotePageNav {...routeProps} folder={folder} />;
+            // }}
+            component={NotePageNav}
+          />
+        </Error>
+        <Error>
+          <Route path="/add-folder" component={NotePageNav} />
+        </Error>
+        <Error>
+          <Route path="/add-note" component={NotePageNav} />
+        </Error>
       </>
     );
   }

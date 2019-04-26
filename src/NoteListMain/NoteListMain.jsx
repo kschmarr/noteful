@@ -28,7 +28,6 @@ export default class NoteListMain extends React.Component {
               <Note id={note.id} name={note.name} modified={note.modified} />
             </li>
           ))}
-          )}
         </ul>
         <div className="NoteListMain__button-container">
           <CircleButton

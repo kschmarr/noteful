@@ -6,7 +6,7 @@ import config from "../config";
 
 class AddNote extends Component {
   static defaultProps = {
-    // folders: []
+    folders: [],
     history: {
       push: () => {}
     }
@@ -16,9 +16,9 @@ class AddNote extends Component {
   handleSubmit = e => {
     e.preventDefault();
     const newNote = {
-      name: e.target["note-name"].value,
-      content: e.target["note-content"].value,
-      folderId: e.target["note-folder-id"].value,
+      name: e.target["note-name-input"].value,
+      content: e.target["note-content-input"].value,
+      folderId: e.target["note-folder-select"].value,
       modified: new Date()
     };
     fetch(`${config.API_ENDPOINT}/notes`, {
@@ -50,11 +50,11 @@ class AddNote extends Component {
         <NotefulForm onSubmit={this.handleSubmit}>
           <div className="field">
             <label htmlFor="note-name-input">Name</label>
-            <input type="text" id="note-name-input" />
+            <input type="text" id="note-name-input" name="note-name-input" />
           </div>
           <div className="field">
             <label htmlFor="note-content-input">Content</label>
-            <textarea id="note-content-input" />
+            <textarea id="note-content-input" name="note-content-input" />
           </div>
           <div className="field">
             <label htmlFor="note-folder-select">Folder</label>
