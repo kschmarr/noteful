@@ -13,12 +13,19 @@ class AddNote extends Component {
   };
   static contextType = ApiContext;
 
+  constructor(props) {
+    super(props);
+    this.noteNameInput = React.createRef();
+    this.noteContentInput = React.createRef();
+    this.noteFolderSelect = React.createRef();
+  }
+
   handleSubmit = e => {
     e.preventDefault();
     const newNote = {
-      name: e.target["note-name-input"].value,
-      content: e.target["note-content-input"].value,
-      folderId: e.target["note-folder-select"].value,
+      name: this.noteNameInput.current.value,
+      content: this.noteContentInput.current.value,
+      folderId: this.noteFolderSelect.current.value,
       modified: new Date()
     };
     fetch(`${config.API_ENDPOINT}/notes`, {
@@ -34,7 +41,7 @@ class AddNote extends Component {
       })
       .then(note => {
         this.context.addNote(note);
-        this.props.history.push(`/folder/${note.folderId}`);
+        this.props.history.push(`/`);
       })
       .catch(error => {
         console.error({ error });
@@ -50,15 +57,24 @@ class AddNote extends Component {
         <NotefulForm onSubmit={this.handleSubmit}>
           <div className="field">
             <label htmlFor="note-name-input">Name</label>
-            <input type="text" id="note-name-input" name="note-name-input" />
+            <input
+              type="text"
+              id="note-name-input"
+              name="note-name-input"
+              ref={this.noteNameInput}
+            />
           </div>
           <div className="field">
             <label htmlFor="note-content-input">Content</label>
-            <textarea id="note-content-input" name="note-content-input" />
+            <textarea
+              id="note-content-input"
+              name="note-content-input"
+              ref={this.noteContentInput}
+            />
           </div>
           <div className="field">
             <label htmlFor="note-folder-select">Folder</label>
-            <select id="note-folder-select">
+            <select id="note-folder-select" ref={this.noteFolderSelect}>
               <option value={null}>...</option>
               {folders.map(folder => (
                 <option key={folder.id} value={folder.id}>

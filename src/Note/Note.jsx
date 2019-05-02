@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import "./Note.css";
 import ApiContext from "../ApiContext";
 import config from "../config";
+import propTypes from "prop-types";
 
 export default class Note extends React.Component {
   static defaultProps = {
@@ -56,3 +57,10 @@ export default class Note extends React.Component {
     );
   }
 }
+
+Note.propTypes = {
+  id: propTypes.string,
+  name: propTypes.string,
+  modified: propTypes.string,
+  onDeleteNote: propTypes.func
+};
