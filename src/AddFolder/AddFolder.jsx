@@ -22,14 +22,12 @@ class AddFolder extends Component {
         folderName: ""
       }
     };
-    // this.context.addFolder(folder);
   }
 
   validateName(fieldValue) {
     const fieldErrors = { ...this.state.validationMessages };
     let hasError = false;
-
-    // fieldValue = fieldValue.trim();
+    fieldValue = fieldValue.trim();
     if (fieldValue.length === 0) {
       fieldErrors.folderName = "Name is required";
       hasError = true;
@@ -46,12 +44,6 @@ class AddFolder extends Component {
     this.setState({
       validationMessages: fieldErrors,
       nameValid: !hasError
-    });
-  }
-
-  addFolder(folderName) {
-    this.setState({ folderName }, () => {
-      this.validateName(folderName);
     });
   }
 
@@ -73,9 +65,10 @@ class AddFolder extends Component {
         return res.json();
       })
       .then(folder => {
-        this.addFolder(folder);
-        this.props.history.push(`/`);
+        this.setState({ folderName: folder.name });
       })
+      .then(() => this.props.history.push(`/`))
+
       .catch(error => {
         console.error({ error });
       });
@@ -92,7 +85,8 @@ class AddFolder extends Component {
               type="text"
               id="folder-name-input"
               name="folder-name"
-              onChange={e => this.addFolder(e.target.value)}
+              onChange={e => this.validateName(e.target.value)}
+              required
             />
             <ValidationError
               hasError={!this.state.nameValid}
@@ -100,7 +94,9 @@ class AddFolder extends Component {
             />
           </div>
           <div className="buttons">
-            <button type="submit">Add folder</button>
+            <button type="submit" disabled={!this.state.nameValid}>
+              Add folder
+            </button>
           </div>
         </NotefulForm>
       </section>

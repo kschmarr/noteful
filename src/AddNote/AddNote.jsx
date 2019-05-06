@@ -15,17 +15,63 @@ class AddNote extends Component {
 
   constructor(props) {
     super(props);
-    this.noteNameInput = React.createRef();
-    this.noteContentInput = React.createRef();
-    this.noteFolderSelect = React.createRef();
+    this.state = {
+      noteName: "",
+      nameValid: false,
+      content: "",
+      folderId: "",
+      validationMessages: {
+        noteName: "",
+        content: "",
+        folderId: ""
+      }
+    };
+  }
+
+  updateNoteName(noteName) {
+    this.setState({ noteName });
+  }
+  updateContent(content) {
+    this.setState({ content });
+  }
+  updateFolderId(folderId) {
+    this.setState({ folderId });
+  }
+
+  addNote(noteName) {
+    this.setState({ noteName });
+  }
+
+  validateName(fieldValue) {
+    const fieldErrors = { ...this.state.validationMessages };
+    let hasError = false;
+    console.log(fieldValue);
+    fieldValue = fieldValue.trim();
+    if (fieldValue.length === 0) {
+      fieldErrors.noteName = "Name is required";
+      hasError = true;
+    } else {
+      if (fieldValue.length < 3) {
+        fieldErrors.noteName = "Name must be at least 3 characters long";
+        hasError = true;
+      } else {
+        fieldErrors.noteName = "";
+        hasError = false;
+      }
+    }
+
+    this.setState({
+      validationMessages: fieldErrors,
+      nameValid: !hasError
+    });
   }
 
   handleSubmit = e => {
     e.preventDefault();
     const newNote = {
-      name: this.noteNameInput.current.value,
-      content: this.noteContentInput.current.value,
-      folderId: this.noteFolderSelect.current.value,
+      name: e.target["note-name-input"].value,
+      content: e.target["note-content-input"].value,
+      folderId: e.target["note-folder-select"].value,
       modified: new Date()
     };
     fetch(`${config.API_ENDPOINT}/notes`, {
@@ -40,7 +86,7 @@ class AddNote extends Component {
         return res.json();
       })
       .then(note => {
-        this.context.addNote(note);
+        this.addNote(note);
         this.props.history.push(`/`);
       })
       .catch(error => {
@@ -61,7 +107,8 @@ class AddNote extends Component {
               type="text"
               id="note-name-input"
               name="note-name-input"
-              ref={this.noteNameInput}
+              required
+              onChange={e => this.validateName(e.target.value)}
             />
           </div>
           <div className="field">
@@ -69,12 +116,17 @@ class AddNote extends Component {
             <textarea
               id="note-content-input"
               name="note-content-input"
-              ref={this.noteContentInput}
+              required
+              onChange={e => this.updateContent(e.target.value)}
             />
           </div>
           <div className="field">
             <label htmlFor="note-folder-select">Folder</label>
-            <select id="note-folder-select" ref={this.noteFolderSelect}>
+            <select
+              id="note-folder-select"
+              required
+              onChange={e => this.updateFolderId(e.target.value)}
+            >
               <option value={null}>...</option>
               {folders.map(folder => (
                 <option key={folder.id} value={folder.id}>
@@ -84,7 +136,9 @@ class AddNote extends Component {
             </select>
           </div>
           <div className="buttons">
-            <button type="submit">Add note</button>
+            <button type="submit" disabled={!this.state.nameValid}>
+              Add note
+            </button>
           </div>
         </NotefulForm>
       </section>
