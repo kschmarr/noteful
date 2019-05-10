@@ -18,6 +18,8 @@ class AddNote extends Component {
     this.state = {
       noteName: "",
       nameValid: false,
+      contentValid: false,
+      folderIdValid: false,
       content: "",
       folderId: "",
       validationMessages: {
@@ -28,9 +30,6 @@ class AddNote extends Component {
     };
   }
 
-  updateNoteName(noteName) {
-    this.setState({ noteName });
-  }
   updateContent(content) {
     this.setState({ content });
   }
@@ -38,42 +37,82 @@ class AddNote extends Component {
     this.setState({ folderId });
   }
 
-  addNote(noteName) {
-    this.setState({ noteName });
-  }
-
   validateName(fieldValue) {
     const fieldErrors = { ...this.state.validationMessages };
     let hasError = false;
-    console.log(fieldValue);
     fieldValue = fieldValue.trim();
     if (fieldValue.length === 0) {
-      fieldErrors.noteName = "Name is required";
       hasError = true;
     } else {
       if (fieldValue.length < 3) {
-        fieldErrors.noteName = "Name must be at least 3 characters long";
         hasError = true;
       } else {
-        fieldErrors.noteName = "";
         hasError = false;
       }
     }
 
     this.setState({
       validationMessages: fieldErrors,
-      nameValid: !hasError
+      nameValid: !hasError,
+      noteName: fieldValue
+    });
+  }
+  validateContent(fieldValue) {
+    const fieldErrors = { ...this.state.validationMessages };
+    let hasError = false;
+    console.log(fieldValue);
+    fieldValue = fieldValue.trim();
+    if (fieldValue.length === 0) {
+      hasError = true;
+    } else {
+      if (fieldValue.length < 3) {
+        hasError = true;
+      } else {
+        hasError = false;
+      }
+    }
+
+    this.setState({
+      validationMessages: { ...fieldErrors },
+      contentValid: !hasError,
+      content: fieldValue
+    });
+  }
+  validateFolderId(fieldValue) {
+    const fieldErrors = { ...this.state.validationMessages };
+    let hasError = false;
+    console.log(fieldValue);
+    fieldValue = fieldValue.trim();
+    if (fieldValue.length === "" || fieldValue.length === "...") {
+      hasError = true;
+    } else {
+      hasError = false;
+    }
+
+    this.setState({
+      validationMessages: { ...fieldErrors },
+      folderIdValid: !hasError,
+      folderId: fieldValue
     });
   }
 
   handleSubmit = e => {
     e.preventDefault();
+    const {
+      noteName,
+      content,
+      folderId,
+      nameValid,
+      contentValid,
+      folderIdValid
+    } = this.state;
     const newNote = {
-      name: e.target["note-name-input"].value,
-      content: e.target["note-content-input"].value,
-      folderId: e.target["note-folder-select"].value,
+      name: noteName,
+      content: content,
+      folderId: folderId,
       modified: new Date()
     };
+    console.log(nameValid, contentValid, folderIdValid);
     fetch(`${config.API_ENDPOINT}/notes`, {
       method: "POST",
       headers: {
@@ -85,8 +124,14 @@ class AddNote extends Component {
         if (!res.ok) return res.json().then(e => Promise.reject(e));
         return res.json();
       })
-      .then(note => {
-        this.addNote(note);
+      .then(() => {
+        this.setState({
+          noteName: "",
+          content: "",
+          folderId: ""
+        });
+      })
+      .then(() => {
         this.props.history.push(`/`);
       })
       .catch(error => {
@@ -96,7 +141,7 @@ class AddNote extends Component {
 
   render() {
     const { folders = [] } = this.context;
-
+    const { nameValid, contentValid, folderIdValid } = this.state;
     return (
       <section className="AddNote">
         <h2>Create a note</h2>
@@ -107,8 +152,8 @@ class AddNote extends Component {
               type="text"
               id="note-name-input"
               name="note-name-input"
-              required
               onChange={e => this.validateName(e.target.value)}
+              value={this.state.noteName}
             />
           </div>
           <div className="field">
@@ -116,16 +161,15 @@ class AddNote extends Component {
             <textarea
               id="note-content-input"
               name="note-content-input"
-              required
-              onChange={e => this.updateContent(e.target.value)}
+              onChange={e => this.validateContent(e.target.value)}
+              value={this.state.content}
             />
           </div>
           <div className="field">
             <label htmlFor="note-folder-select">Folder</label>
             <select
               id="note-folder-select"
-              required
-              onChange={e => this.updateFolderId(e.target.value)}
+              onChange={e => this.validateFolderId(e.target.value)}
             >
               <option value={null}>...</option>
               {folders.map(folder => (
@@ -136,7 +180,10 @@ class AddNote extends Component {
             </select>
           </div>
           <div className="buttons">
-            <button type="submit" disabled={!this.state.nameValid}>
+            <button
+              type="submit"
+              disabled={!nameValid || !contentValid || !folderIdValid}
+            >
               Add note
             </button>
           </div>

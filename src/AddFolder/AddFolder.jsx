@@ -16,10 +16,10 @@ class AddFolder extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      folderName: "",
+      name: "",
       nameValid: false,
       validationMessages: {
-        folderName: ""
+        name: ""
       }
     };
   }
@@ -29,43 +29,44 @@ class AddFolder extends Component {
     let hasError = false;
     fieldValue = fieldValue.trim();
     if (fieldValue.length === 0) {
-      fieldErrors.folderName = "Name is required";
+      fieldErrors.name = "Name is required";
       hasError = true;
     } else {
       if (fieldValue.length < 3) {
-        fieldErrors.folderName = "Name must be at least 3 characters long";
+        fieldErrors.name = "Name must be at least 3 characters long";
         hasError = true;
       } else {
-        fieldErrors.folderName = "";
+        fieldErrors.name = "";
         hasError = false;
       }
     }
 
     this.setState({
       validationMessages: fieldErrors,
-      nameValid: !hasError
+      nameValid: !hasError,
+      name: fieldValue
     });
   }
 
   handleSubmit = e => {
     e.preventDefault();
-    const folder = {
-      name: e.target["folder-name"].value
-    };
+    const { name } = this.state;
 
     fetch(`${config.API_ENDPOINT}/folders`, {
       method: "POST",
       headers: {
         "content-type": "application/json"
       },
-      body: JSON.stringify(folder)
+      body: JSON.stringify({ name })
     })
       .then(res => {
         if (!res.ok) return res.json().then(e => Promise.reject(e));
         return res.json();
       })
-      .then(folder => {
-        this.setState({ folderName: folder.name });
+      .then(() => this.context.AddFolder(name))
+
+      .then(() => {
+        return this.setState({ name: "" });
       })
       .then(() => this.props.history.push(`/`))
 
@@ -90,7 +91,7 @@ class AddFolder extends Component {
             />
             <ValidationError
               hasError={!this.state.nameValid}
-              message={this.state.validationMessages.folderName}
+              message={this.state.validationMessages.name}
             />
           </div>
           <div className="buttons">

@@ -6,8 +6,6 @@ import NoteListMain from "../NoteListMain/NoteListMain";
 import NotePageMain from "../NotePageMain/NotePageMain";
 import AddFolder from "../AddFolder/AddFolder";
 import AddNote from "../AddNote/AddNote";
-// import dummyStore from "../dummy-store";
-// import { getNotesForFolder, findNote, findFolder } from "../notes-helpers";
 import "./App.css";
 import ApiContext from "../ApiContext";
 import config from "../config";
@@ -20,7 +18,6 @@ class App extends Component {
   };
 
   componentDidMount() {
-    // setTimeout(() => this.setState(dummyStore), 600);
     Promise.all([
       fetch(`${config.API_ENDPOINT}/notes`),
       fetch(`${config.API_ENDPOINT}/folders`)
@@ -46,6 +43,10 @@ class App extends Component {
     });
   };
 
+  handleAddFolder = newFolder => {
+    this.setState({ folders: [...this.state.folders, newFolder] });
+  };
+
   handleDeleteNote = noteId => {
     this.setState({
       notes: this.state.notes.filter(note => note.id !== noteId)
@@ -53,7 +54,6 @@ class App extends Component {
   };
 
   renderNavRoutes() {
-    // const { notes, folders } = this.state;
     return (
       <>
         <Error>
@@ -75,7 +75,6 @@ class App extends Component {
   }
 
   renderMainRoutes() {
-    // const { notes, folders } = this.state;
     return (
       <>
         {["/", "/folder/:folderId"].map(path => (
@@ -94,7 +93,8 @@ class App extends Component {
       folders: this.state.folders,
       AddFolder: this.handleAddFolder,
       AddNote: this.handleAddNote,
-      deleteNote: this.handleDeleteNote
+      deleteNote: this.handleDeleteNote,
+      mountWithFolder: this.handleMountWithFolder
     };
     return (
       <ApiContext.Provider value={value}>
