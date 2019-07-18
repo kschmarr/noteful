@@ -21,11 +21,11 @@ class AddNote extends Component {
       contentValid: false,
       folderIdValid: false,
       content: "",
-      folderId: "",
+      folderid: "",
       validationMessages: {
         noteName: "",
         content: "",
-        folderId: ""
+        folderid: ""
       }
     };
   }
@@ -33,8 +33,8 @@ class AddNote extends Component {
   updateContent(content) {
     this.setState({ content });
   }
-  updateFolderId(folderId) {
-    this.setState({ folderId });
+  updateFolderId(folderid) {
+    this.setState({ folderid });
   }
 
   validateName(fieldValue) {
@@ -88,11 +88,10 @@ class AddNote extends Component {
     } else {
       hasError = false;
     }
-
     this.setState({
       validationMessages: { ...fieldErrors },
       folderIdValid: !hasError,
-      folderId: fieldValue
+      folderid: fieldValue
     });
   }
 
@@ -101,16 +100,16 @@ class AddNote extends Component {
     const {
       noteName,
       content,
-      folderId,
+      folderid,
       nameValid,
       contentValid,
       folderIdValid
     } = this.state;
     const newNote = {
-      name: noteName,
+      title: noteName,
       content: content,
-      folderId: folderId,
-      modified: new Date()
+      folderid: folderid,
+      date_modified: new Date()
     };
     console.log(nameValid, contentValid, folderIdValid);
     fetch(`${config.API_ENDPOINT}/notes`, {
@@ -128,7 +127,7 @@ class AddNote extends Component {
         this.setState({
           noteName: "",
           content: "",
-          folderId: ""
+          folderid: ""
         });
       })
       .then(() => {
@@ -150,16 +149,16 @@ class AddNote extends Component {
             <label htmlFor="note-name-input">Name</label>
             <input
               type="text"
-              id="note-name-input"
+              noteid="note-name-input"
               name="note-name-input"
               onChange={e => this.validateName(e.target.value)}
-              value={this.state.noteName}
+              value={this.state.title}
             />
           </div>
           <div className="field">
             <label htmlFor="note-content-input">Content</label>
             <textarea
-              id="note-content-input"
+              content="note-content-input"
               name="note-content-input"
               onChange={e => this.validateContent(e.target.value)}
               value={this.state.content}
@@ -168,13 +167,13 @@ class AddNote extends Component {
           <div className="field">
             <label htmlFor="note-folder-select">Folder</label>
             <select
-              id="note-folder-select"
+              folderid="note-folder-select"
               onChange={e => this.validateFolderId(e.target.value)}
             >
               <option value={null}>...</option>
               {folders.map(folder => (
-                <option key={folder.id} value={folder.id}>
-                  {folder.name}
+                <option key={folder.folderid} value={folder.folderid}>
+                  {folder.title}
                 </option>
               ))}
             </select>

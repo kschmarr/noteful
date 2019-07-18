@@ -13,15 +13,15 @@ export default class NoteListNav extends React.Component {
       <div className="NoteListNav">
         <ul className="NoteListNav__list">
           {folders.map(folder => (
-            <li key={folder.id}>
+            <li key={folder.folderid}>
               <NavLink
                 className="NoteListNav__folder-link"
-                to={`/folder/${folder.id}`}
+                to={`/folder/${folder.folderid}`}
               >
                 <span className="NoteListNav__num-notes">
-                  {countNotesForFolder(notes, folder.id)}
+                  {countNotesForFolder(notes, folder.folderid)}
                 </span>
-                {folder.name}
+                {folder.title}
               </NavLink>
             </li>
           ))}

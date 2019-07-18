@@ -57,7 +57,7 @@ class AddFolder extends Component {
       headers: {
         "content-type": "application/json"
       },
-      body: JSON.stringify({ name })
+      body: JSON.stringify({ title: name })
     })
       .then(res => {
         if (!res.ok) return res.json().then(e => Promise.reject(e));
