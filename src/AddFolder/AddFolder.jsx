@@ -64,13 +64,11 @@ class AddFolder extends Component {
         return res.json();
       })
       .then(data => {
-        console.log(data);
         this.context.AddFolder(data);
         return data.title;
       })
 
       .then(name => {
-        console.log(name);
         return this.setState({ name: name });
       })
       .then(() => this.props.history.push(`/`))

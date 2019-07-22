@@ -9,6 +9,9 @@ class NotePageMain extends React.Component {
   static defaultProps = {
     match: {
       params: {}
+    },
+    history: {
+      push: () => {}
     }
   };
   static contextType = ApiContext;

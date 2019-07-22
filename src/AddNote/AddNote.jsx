@@ -93,14 +93,7 @@ class AddNote extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    const {
-      noteName,
-      content,
-      folderid,
-      nameValid,
-      contentValid,
-      folderIdValid
-    } = this.state;
+    const { noteName, content, folderid } = this.state;
     const newNote = {
       title: noteName,
       content: content,
@@ -120,7 +113,6 @@ class AddNote extends Component {
         return res.json();
       })
       .then(data => {
-        console.log(data);
         this.context.addNote(data);
       })
       .then(() => {

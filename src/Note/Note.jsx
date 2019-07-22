@@ -14,6 +14,9 @@ export default class Note extends React.Component {
     };
   }
   static defaultProps = {
+    history: {
+      push: () => {}
+    },
     onDeleteNote: () => {}
   };
   static contextType = ApiContext;
@@ -28,14 +31,12 @@ export default class Note extends React.Component {
       }
     })
       .then(res => {
-        console.log(res);
         if (!res.ok) {
           return res.json().then(e => Promise.reject(e));
         }
         return res.json();
       })
       .then(data => {
-        console.log(data);
         this.context.deleteNote(noteid);
         this.props.onDeleteNote(noteid);
       })
@@ -75,7 +76,7 @@ export default class Note extends React.Component {
 }
 
 Note.propTypes = {
-  noteid: propTypes.string,
+  noteid: propTypes.number,
   name: propTypes.string,
   modified: propTypes.string,
   onDeleteNote: propTypes.func

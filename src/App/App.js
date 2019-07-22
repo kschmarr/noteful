@@ -44,13 +44,10 @@ class App extends Component {
   };
 
   handleAddFolder = newFolder => {
-    console.log(this.state.folders);
-    console.log(newFolder);
     this.setState({ folders: [...this.state.folders, newFolder] });
   };
 
   handleDeleteNote = noteid => {
-    console.log(noteid);
     this.setState({
       notes: this.state.notes.filter(note => note.noteid !== noteid)
     });
