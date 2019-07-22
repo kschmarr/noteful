@@ -3,8 +3,9 @@ import Note from "../Note/Note";
 import "./NotePageMain.css";
 import ApiContext from "../ApiContext";
 import { findNote } from "../notes-helpers";
+import { withRouter } from "react-router-dom";
 
-export default class NotePageMain extends React.Component {
+class NotePageMain extends React.Component {
   static defaultProps = {
     match: {
       params: {}
@@ -37,3 +38,4 @@ export default class NotePageMain extends React.Component {
     );
   }
 }
+export default withRouter(NotePageMain);

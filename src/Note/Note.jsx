@@ -7,6 +7,12 @@ import config from "../config";
 import propTypes from "prop-types";
 
 export default class Note extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      changed: false
+    };
+  }
   static defaultProps = {
     onDeleteNote: () => {}
   };
@@ -22,13 +28,23 @@ export default class Note extends React.Component {
       }
     })
       .then(res => {
-        if (!res.ok) return res.json().then(e => Promise.reject(e));
+        console.log(res);
+        if (!res.ok) {
+          return res.json().then(e => Promise.reject(e));
+        }
         return res.json();
       })
-      .then(() => {
+      .then(data => {
+        console.log(data);
         this.context.deleteNote(noteid);
-        // this.props.onDeleteNote(noteid);
+        this.props.onDeleteNote(noteid);
       })
+      .then(() => {
+        this.setState({
+          changed: true ? false : true
+        });
+      })
+      .then(() => this.props.history.push("/"))
       .catch(error => {
         console.error({ error });
       });

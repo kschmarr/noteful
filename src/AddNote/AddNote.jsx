@@ -60,12 +60,10 @@ class AddNote extends Component {
   validateContent(fieldValue) {
     const fieldErrors = { ...this.state.validationMessages };
     let hasError = false;
-    console.log(fieldValue);
-    fieldValue = fieldValue.trim();
-    if (fieldValue.length === 0) {
+    if (fieldValue.trim().length === 0) {
       hasError = true;
     } else {
-      if (fieldValue.length < 3) {
+      if (fieldValue.trim().length < 3) {
         hasError = true;
       } else {
         hasError = false;
@@ -81,8 +79,6 @@ class AddNote extends Component {
   validateFolderId(fieldValue) {
     const fieldErrors = { ...this.state.validationMessages };
     let hasError = false;
-    console.log(fieldValue);
-    fieldValue = fieldValue.trim();
     if (fieldValue.length === "" || fieldValue.length === "...") {
       hasError = true;
     } else {
@@ -111,7 +107,7 @@ class AddNote extends Component {
       folderid: folderid,
       date_modified: new Date()
     };
-    console.log(nameValid, contentValid, folderIdValid);
+
     fetch(`${config.API_ENDPOINT}/notes`, {
       method: "POST",
       headers: {
@@ -123,16 +119,14 @@ class AddNote extends Component {
         if (!res.ok) return res.json().then(e => Promise.reject(e));
         return res.json();
       })
-      .then(() => {
-        this.setState({
-          noteName: "",
-          content: "",
-          folderid: ""
-        });
+      .then(data => {
+        console.log(data);
+        this.context.addNote(data);
       })
       .then(() => {
         this.props.history.push(`/`);
       })
+
       .catch(error => {
         console.error({ error });
       });

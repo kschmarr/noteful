@@ -63,10 +63,15 @@ class AddFolder extends Component {
         if (!res.ok) return res.json().then(e => Promise.reject(e));
         return res.json();
       })
-      .then(() => this.context.AddFolder(name))
+      .then(data => {
+        console.log(data);
+        this.context.AddFolder(data);
+        return data.title;
+      })
 
-      .then(() => {
-        return this.setState({ name: "" });
+      .then(name => {
+        console.log(name);
+        return this.setState({ name: name });
       })
       .then(() => this.props.history.push(`/`))
 

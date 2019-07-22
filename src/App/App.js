@@ -39,15 +39,18 @@ class App extends Component {
 
   handleAddNote = note => {
     this.setState({
-      notes: [...this.state.notes, note]
+      notes: [...this.state.notes, note[0]]
     });
   };
 
   handleAddFolder = newFolder => {
+    console.log(this.state.folders);
+    console.log(newFolder);
     this.setState({ folders: [...this.state.folders, newFolder] });
   };
 
   handleDeleteNote = noteid => {
+    console.log(noteid);
     this.setState({
       notes: this.state.notes.filter(note => note.noteid !== noteid)
     });
@@ -92,7 +95,7 @@ class App extends Component {
       notes: this.state.notes,
       folders: this.state.folders,
       AddFolder: this.handleAddFolder,
-      AddNote: this.handleAddNote,
+      addNote: this.handleAddNote,
       deleteNote: this.handleDeleteNote,
       mountWithFolder: this.handleMountWithFolder
     };
