@@ -68,9 +68,9 @@ class AddFolder extends Component {
         return data.title;
       })
 
-      .then(name => {
-        return this.setState({ name: name });
-      })
+      // .then(name => {
+      //   return this.setState({ name: name });
+      // })
       .then(() => this.props.history.push(`/`))
 
       .catch(error => {

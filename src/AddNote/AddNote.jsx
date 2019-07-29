@@ -16,14 +16,14 @@ class AddNote extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      noteName: "",
+      title: "",
       nameValid: false,
       contentValid: false,
       folderIdValid: false,
       content: "",
       folderid: "",
       validationMessages: {
-        noteName: "",
+        title: "",
         content: "",
         folderid: ""
       }
@@ -54,7 +54,7 @@ class AddNote extends Component {
     this.setState({
       validationMessages: fieldErrors,
       nameValid: !hasError,
-      noteName: fieldValue
+      title: fieldValue
     });
   }
   validateContent(fieldValue) {
@@ -93,9 +93,9 @@ class AddNote extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    const { noteName, content, folderid } = this.state;
+    const { title, content, folderid } = this.state;
     const newNote = {
-      title: noteName,
+      title: title,
       content: content,
       folderid: folderid,
       date_modified: new Date()
@@ -113,10 +113,12 @@ class AddNote extends Component {
         return res.json();
       })
       .then(data => {
-        this.context.addNote(data);
+        console.log(data);
+        this.context.addNote(data[0]);
       })
-      .then(() => {
+      .then(data => {
         this.props.history.push(`/`);
+        return data;
       })
 
       .catch(error => {
@@ -135,7 +137,7 @@ class AddNote extends Component {
             <label htmlFor="note-name-input">Name</label>
             <input
               type="text"
-              noteid="note-name-input"
+              id="note-name-input"
               name="note-name-input"
               onChange={e => this.validateName(e.target.value)}
               value={this.state.title}

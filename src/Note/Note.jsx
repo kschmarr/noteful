@@ -10,20 +10,21 @@ export default class Note extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      changed: false
+      notes: [],
+      folders: []
     };
   }
+
   static defaultProps = {
     history: {
       push: () => {}
-    },
-    onDeleteNote: () => {}
+    }
   };
   static contextType = ApiContext;
 
   handleClickDelete = e => {
     e.preventDefault();
-    const noteid = this.props.noteid;
+    const { noteid } = this.props;
     fetch(`${config.API_ENDPOINT}/notes/${noteid}`, {
       method: "DELETE",
       headers: {
@@ -36,20 +37,17 @@ export default class Note extends React.Component {
         }
         return res.json();
       })
+
       .then(data => {
-        this.context.deleteNote(noteid);
-        this.props.onDeleteNote(noteid);
+        this.context.deleteNote(data.noteid);
+        window.location.href = "/";
       })
-      .then(() => {
-        this.setState({
-          changed: true ? false : true
-        });
-      })
-      .then(() => this.props.history.push("/"))
+
       .catch(error => {
         console.error({ error });
       });
   };
+
   render() {
     const { name, noteid, modified } = this.props;
     return (
@@ -78,6 +76,5 @@ export default class Note extends React.Component {
 Note.propTypes = {
   noteid: propTypes.number,
   name: propTypes.string,
-  modified: propTypes.string,
-  onDeleteNote: propTypes.func
+  modified: propTypes.string
 };

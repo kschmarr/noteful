@@ -5,20 +5,46 @@ import CircleButton from "../CircleButton/CircleButton";
 import "./NoteListMain.css";
 import ApiContext from "../ApiContext";
 import { getNotesForFolder } from "../notes-helpers";
+import config from "../config";
 
 export default class NoteListMain extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      notes: [],
+      folders: []
+    };
+  }
   static defaultProps = {
     match: {
       params: {}
     }
   };
+  componentDidMount() {
+    Promise.all([
+      fetch(`${config.API_ENDPOINT}/notes`),
+      fetch(`${config.API_ENDPOINT}/folders`)
+    ])
+      .then(([notesRes, foldersRes]) => {
+        if (!notesRes.ok) return notesRes.json().then(e => Promise.reject(e));
+        if (!foldersRes.ok)
+          return foldersRes.json().then(e => Promise.reject(e));
 
+        return Promise.all([notesRes.json(), foldersRes.json()]);
+      })
+      .then(([notes, folders]) => {
+        this.setState({ notes, folders });
+      })
+      .catch(error => {
+        console.error({ error });
+      });
+  }
   static contextType = ApiContext;
 
   render() {
-    const { folderId } = this.props.match.params;
-    const { notes = [] } = this.context;
-    const notesForFolder = getNotesForFolder(notes, folderId);
+    const { folderid } = this.props.match.params;
+    const { notes = [] } = this.state;
+    const notesForFolder = getNotesForFolder(notes, folderid);
 
     return (
       <section className="NoteListMain">

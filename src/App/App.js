@@ -12,10 +12,13 @@ import config from "../config";
 import Error from "./Error";
 
 class App extends Component {
-  state = {
-    notes: [],
-    folders: []
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      notes: [],
+      folders: []
+    };
+  }
 
   componentDidMount() {
     Promise.all([
@@ -39,7 +42,7 @@ class App extends Component {
 
   handleAddNote = note => {
     this.setState({
-      notes: [...this.state.notes, note[0]]
+      notes: [...this.state.notes, note]
     });
   };
 
@@ -48,8 +51,18 @@ class App extends Component {
   };
 
   handleDeleteNote = noteid => {
+    // const newNotes = this.state.notes.filter(
+    //   note => toString(note.noteid) !== noteid
+    // );
+    let newNotes = [];
+    for (let i = 0; i < this.state.notes.length; i++) {
+      if (parseInt(this.state.notes[i].noteid) !== parseInt(noteid)) {
+        newNotes.push(this.state.notes[i]);
+      }
+    }
+    console.log(newNotes);
     this.setState({
-      notes: this.state.notes.filter(note => note.noteid !== noteid)
+      notes: newNotes
     });
   };
 
@@ -80,7 +93,7 @@ class App extends Component {
         {["/", "/folder/:folderid"].map(path => (
           <Route exact key={path} path={path} component={NoteListMain} />
         ))}
-        <Route path="/note/:noteid" component={NotePageMain} />
+        <Route exact path="/note/:noteid" component={NotePageMain} />
         <Route path="/add-folder" component={AddFolder} />
         <Route path="/add-note" component={AddNote} />
       </>

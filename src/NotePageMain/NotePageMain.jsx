@@ -4,8 +4,15 @@ import "./NotePageMain.css";
 import ApiContext from "../ApiContext";
 import { findNote } from "../notes-helpers";
 import { withRouter } from "react-router-dom";
-
+import config from "../config";
 class NotePageMain extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      notes: [],
+      folders: []
+    };
+  }
   static defaultProps = {
     match: {
       params: {}
@@ -14,23 +21,37 @@ class NotePageMain extends React.Component {
       push: () => {}
     }
   };
+  componentDidMount() {
+    Promise.all([
+      fetch(`${config.API_ENDPOINT}/notes`),
+      fetch(`${config.API_ENDPOINT}/folders`)
+    ])
+      .then(([notesRes, foldersRes]) => {
+        if (!notesRes.ok) return notesRes.json().then(e => Promise.reject(e));
+        if (!foldersRes.ok)
+          return foldersRes.json().then(e => Promise.reject(e));
+
+        return Promise.all([notesRes.json(), foldersRes.json()]);
+      })
+      .then(([notes, folders]) => {
+        this.setState({ notes, folders });
+      })
+      .catch(error => {
+        console.error({ error });
+      });
+  }
   static contextType = ApiContext;
 
-  handleDeleteNote = () => {
-    this.props.history.push("/");
-  };
   render() {
-    const { notes = [] } = this.context;
+    const { notes = [] } = this.state;
     const { noteid } = this.props.match.params;
     const note = findNote(notes, noteid) || { content: "" };
-
     return (
       <section className="NotePageMain">
         <Note
-          noteid={note.noteid}
+          noteid={Number(note.noteid)}
           name={note.title}
           modified={note.date_published}
-          onDeleteNote={this.handleDeleteNote}
         />
         <div className="NotePageMain__content">
           {note.content.split(/\n \r|\n/).map((para, i) => (
